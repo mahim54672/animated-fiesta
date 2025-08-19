@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>Postimg-style Base64 Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 10px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 20px;
+    }
+    .preview {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    .preview img {
+      max-height: 100%;
+      max-width: 100%;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 10px 0 20px 0;
+      width: 100%;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    button {
+      flex: 1;
+      min-width: 120px;
+      background: #0099cc;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0077aa;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: monospace;
+      resize: none;
+      box-sizing: border-box;
+    }
+    .note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+      text-align: justify;
+    }
+
+    /* Mobile-friendly tweaks */
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 18px;
+      }
+      .preview {
+        height: 150px;
+        font-size: 12px;
+      }
+      textarea {
+        height: 120px;
+        font-size: 12px;
+      }
+      button {
+        padding: 8px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Postimg-style Base64 Generator</h2>
+    <p>ছবি নির্বাচন করলে নিচে Base64 স্ট্রিং তৈরি হবে — এটা কেবল স্থানীয়ভাবে জেনারেটেড (না-আপলোড)।</p>
+    
+    <div class="preview" id="preview">Preview</div>
+    
+    <label>Image নির্বাচন করুন</label>
+    <input type="file" id="fileInput" accept="image/*">
+    
+    <div class="btn-group">
+      <button onclick="generateBase64()">Generate Base64</button>
+      <button onclick="copyBase64()">Copy</button>
+    </div>
+    
+    <textarea id="base64Output" readonly placeholder="Base64 string will appear here..."></textarea>
+    
+    <div class="btn-group">
+      <button onclick="downloadImage()">Download image</button>
+    </div>
+    
+    <p class="note">
+      ℹ️ এই টুল শুধু Base64 স্ট্রিং জেনারেট করে।।
+    </p>
+  </div>
+
+  <script>
+    let base64String = "";
+    let fileName = "";
+
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if(file) {
+        fileName = file.name;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          base64String = event.target.result;
+          document.getElementById('preview').innerHTML = `<img src="${base64String}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function generateBase64() {
+      if(base64String) {
+        document.getElementById('base64Output').value = base64String;
+      } else {
+        alert("Please select an image first!");
+      }
+    }
+
+    function copyBase64() {
+      const textArea = document.getElementById('base64Output');
+      textArea.select();
+      document.execCommand("copy");
+      alert("✅ Base64 copied to clipboard!");
+    }
+
+    function downloadImage() {
+      if(base64String) {
+        const a = document.createElement('a');
+        a.href = base64String;
+        a.download = fileName || "download.png";
+        a.click();
+      } else {
+        alert("Please select an image first!");
+      }
+    }
+  </script>
+</body>
+</html>
